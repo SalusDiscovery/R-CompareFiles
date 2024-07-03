@@ -1,3 +1,7 @@
+list.of.packages <- c('shiny','diffobj','purrr','fansi','crayon','tools','pdftools','stringr','readtext','tesseract')
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(shiny)
 library(diffobj)
 library(purrr)
@@ -7,17 +11,15 @@ library(tools)
 library(pdftools)
 library(stringr)
 library(readtext)
+library(tesseract)
 
 #### Great Resource ####
 # https://ladal.edu.au/pdf2txt.html#OCR_with_pdftools
 
-
-
-
 wdiff_internal <- function(original, edited)
 {
-	a <- unlist(strsplit(original, sep))
-	b <- unlist(strsplit(edited, sep))
+	a <- unlist(strsplit(original, " "))
+	b <- unlist(strsplit(edited, " "))
 	
 	dat <- diffobj::ses_dat(a, b)
 	
@@ -41,7 +43,7 @@ wdiff_internal <- function(original, edited)
 
 wdiff <- function(original, edited, sep = " ")
 {
-	purrr::map2_chr(original, edited, ~wdiff_internal(.x, .y, sep = sep))
+	purrr::map2_chr(original, edited, ~wdiff_internal(.x, .y))
 }
 
 read_pdf_image <- function(file)
